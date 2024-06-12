@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { resolve } from 'path';
 import { UserModule } from './user/user.module';
 import { User } from './user/models/user.model';
 import { CustomerModule } from './customer/customer.module';
@@ -27,9 +25,6 @@ import { CustomerContact } from './customer-contact/models/customer-contact.mode
       models: [User, Customer, Contact, UserContact, CustomerContact],
       autoLoadModels: true,
       logging: false,
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: resolve(__dirname, '..', 'uploads'),
     }),
     UserModule,
     CustomerModule,
