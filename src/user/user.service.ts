@@ -254,20 +254,52 @@ export class UserService {
   }
 
   async delete(id: number) {
-    await this.repo.destroy({ where: { id } });
+    const user = await this.repo.findByPk(id);
+    if (!user) {
+      throw new BadRequestException(`${id} - not user`);
+    }
+    if (user.image !== 'null') {
+      try {
+        await this.fileService.deleteFile(user.image);
+      } catch (error) {
+        throw new BadRequestException(error.message);
+      }
+    }
+    user.destroy();
     return {
-      message: 'User delete',
+      message: 'User deleted',
     };
   }
 
-  async update(id: number, updateDto: UserUpdateDto) {
-    const user = await this.repo.update(updateDto, {
-      where: { id },
-    });
-
+  async update(id: number, updateDto: UserUpdateDto, image: any) {
+    const user = await this.repo.findByPk(id);
+    if (!user) {
+      throw new BadRequestException(`${id} -- not user`);
+    }
+    if (image) {
+      let image_name: string;
+      try {
+        if (user.image !== 'null') {
+          try {
+            await this.fileService.deleteFile(user.image);
+          } catch (error) {
+            throw new BadRequestException(error.message);
+          }
+        }
+        image_name = await this.fileService.createFile(image);
+      } catch (error) {
+        throw new BadRequestException(error.message);
+      }
+      const updateUser = await user.update({ image: image_name, ...updateDto });
+      return {
+        message: 'User updated',
+        user: updateUser,
+      };
+    }
+    const updateUser = await user.update(updateDto);
     return {
       message: 'User updated',
-      user: user,
+      user: updateUser,
     };
   }
 

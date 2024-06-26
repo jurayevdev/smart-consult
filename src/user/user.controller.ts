@@ -108,7 +108,12 @@ export class UserController {
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateDto: UserUpdateDto) {
-    return this.service.update(+id, updateDto);
+  @UseInterceptors(FileInterceptor('image'))
+  async update(
+    @Param('id') id: string,
+    @Body() updateDto: UserUpdateDto,
+    @UploadedFile(new ImageValidationPipe()) image: Express.Multer.File,
+  ) {
+    return this.service.update(+id, updateDto, image);
   }
 }
