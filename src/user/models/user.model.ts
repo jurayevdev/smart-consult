@@ -1,10 +1,10 @@
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
-import { UserContact } from 'src/user-contact/models/user-contact.model';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 interface UserAttr {
   full_name: string;
   email: string;
   description: string;
+  image: string;
   hashed_password: string;
   hashed_refresh_token: string;
   role: string;
@@ -37,6 +37,11 @@ export class User extends Model<User, UserAttr> {
   @Column({
     type: DataType.STRING,
   })
+  image: string;
+
+  @Column({
+    type: DataType.STRING,
+  })
   hashed_password: string;
 
   @Column({
@@ -48,7 +53,4 @@ export class User extends Model<User, UserAttr> {
     type: DataType.STRING,
   })
   role: string;
-
-  @HasMany(() => UserContact)
-  userContact: UserContact;
 }

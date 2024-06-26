@@ -10,6 +10,8 @@ import {
   Res,
   UseGuards,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -22,7 +24,8 @@ import { UserCreateDto } from './dto/user-create.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { User } from './models/user.model';
 import { UserUpdateDto } from './dto/user-update.dto';
-import { SuperAdminCreateDto } from './dto/superAdmin-create.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ImageValidationPipe } from 'src/pipes/image-validation.pipe';
 
 @ApiTags('User')
 @Controller('user')
@@ -31,23 +34,27 @@ export class UserController {
 
   @ApiOperation({ summary: 'Super Admin create' })
   @Post('super/create')
+  @UseInterceptors(FileInterceptor('image'))
   async createSuper(
-    @Body() createSuperDto: SuperAdminCreateDto,
+    @Body() createDto: UserCreateDto,
     @Res({ passthrough: true }) res: Response,
+    @UploadedFile(new ImageValidationPipe()) image: Express.Multer.File,
   ) {
-    return this.service.createSuper(createSuperDto, res);
+    return this.service.createSuper(createDto, res, image);
   }
 
   @ApiOperation({ summary: 'User create' })
   @Roles('SUPER-ADMIN')
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
   @Post('create')
   async create(
     @Body() createDto: UserCreateDto,
     @Res({ passthrough: true }) res: Response,
+    @UploadedFile(new ImageValidationPipe()) image: Express.Multer.File,
   ) {
-    return this.service.create(createDto, res);
+    return this.service.create(createDto, res, image);
   }
 
   @ApiOperation({ summary: 'User login' })

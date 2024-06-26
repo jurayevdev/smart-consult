@@ -17,6 +17,9 @@ export class UserCreateDto {
   @IsNotEmpty()
   email: string;
 
+  @ApiProperty({ example: 'Image', description: 'User image' })
+  image: any;
+
   @ApiProperty({ example: 'qwerty', description: 'User password' })
   @IsString()
   @IsNotEmpty()
