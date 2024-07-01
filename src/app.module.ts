@@ -11,6 +11,8 @@ import { CategoryContract } from './category-contract/models/category-contract.m
 import { Contract } from './contract/models/contract.model';
 import { ClientModule } from './client/client.module';
 import { Client } from './client/models/client.model';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { resolve } from 'path';
 
 @Module({
   imports: [
@@ -25,6 +27,9 @@ import { Client } from './client/models/client.model';
       models: [User, CategoryContract, Contract, Client],
       autoLoadModels: true,
       logging: false,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: resolve(__dirname, '..', 'uploads'),
     }),
     FilesModule,
     JwtModule,
